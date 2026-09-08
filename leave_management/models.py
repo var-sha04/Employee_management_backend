@@ -1,0 +1,47 @@
+from django.db import models
+from employees.models import Employee
+
+
+class Leave(models.Model):
+
+    LEAVE_TYPE_CHOICES = [
+        ("CASUAL", "Casual Leave"),
+        ("SICK", "Sick Leave"),
+        ("ANNUAL", "Annual Leave"),
+        ("OTHER", "Other"),
+    ]
+
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("APPROVED", "Approved"),
+        ("REJECTED", "Rejected"),
+    ]
+
+    employee = models.ForeignKey(
+        Employee,
+        on_delete=models.CASCADE,
+        related_name="leave_requests"
+    )
+
+    leave_type = models.CharField(
+        max_length=20,
+        choices=LEAVE_TYPE_CHOICES
+    )
+
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    reason = models.TextField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="PENDING"
+    )
+
+    applied_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.employee.employee_id} - {self.leave_type} - {self.status}"
